@@ -4,6 +4,11 @@ import re
 import cv2
 from image_downloading import download_image
 
+from matplotlib import pyplot as plt
+import numpy as np
+import seaborn as sns
+from PIL import Image
+
 import rasterio
 from rasterio.warp import transform_bounds
 import yaml
@@ -91,6 +96,44 @@ def run(prefs_add: dict):
     print(f'Saved as {name}')
 
 
+def tif_to_arr(tif_path):
+    im = Image.open(tif_path)
+    imarray = np.array(im)
+    return imarray
+
+
+def plot_heatmap_array(tif):
+    if type(tif) == str:
+        array = tif_to_arr(tif)
+    else:
+        array = tif
+    plt.figure(figsize=(15, 10))
+    sns.heatmap(array)
+    plt.show()
+
+
+def clear_image(tif_path: str, write_path='', rewrite=False):
+    imarray = tif_to_arr(tif_path)
+
+    c1 = imarray.copy()
+    real_min = np.unique(c1)[2]
+
+    c2 = c1.copy()
+    c2 = c2[c2 >= real_min]
+    real_mean = np.mean(c2)
+
+    c1[c1 < real_min] = real_mean
+    ended = c1 - real_min
+
+    if write_path:
+        if not rewrite:
+            write_path += '_fixed.tif'
+        Image.fromarray(ended).save(write_path)
+        print(f'Fixed image: {write_path}')
+
+    return ended
+
+
 with open('config.yaml') as f:
     cfg = yaml.load(f, Loader=yaml.FullLoader)
 
@@ -107,6 +150,7 @@ if os.path.isfile(prefs_path):
             prefs_add = {}
             prefs_add['cutsom_dir'] = tif_dir
             prefs_add['tl'], prefs_add['br'], prefs_add['zoom'] = get_corners(filename)
+            clear_image(filename, write_path=filename, rewrite=True)
             prefs_add['image_name'] = filename + '.jpg'
 
             img = cv2.imread(filename, cv2.IMREAD_UNCHANGED)

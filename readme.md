@@ -2,6 +2,8 @@
 
 Python 3.9 | [requirements.txt](./requirements.txt)
 ```bash
+python3.9 -m venv venv
+source venv/bin/activate
 pip install -r requirements.txt
 ```
 
@@ -11,7 +13,7 @@ cd src
 python main.py
 ```
 
-After creating preferences.json file in [src](./src) directory u can specify dataset path:
+After creating preferences.json file in [src](./src) directory u can specify dataset (absolute) path:
 ```yaml
 tif_dir: "/home/deusenko/PycharmProjects/las-tif-postproc/src/tif_dir"
 ```
