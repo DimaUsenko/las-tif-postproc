@@ -1,8 +1,8 @@
 # Usage 
 
-Python 3.9 | [requirements.txt](./requirements.txt)
+Python 3.10 | [requirements.txt](./requirements.txt)
 ```bash
-python3.9 -m venv venv
+python3.10 -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
 ```
